@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CINEMAX - Movies & Beverages</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;800&display=swap');
+        * { margin: 0;padding: 0;box-sizing: border-box; font-family: 'Poppins',sans-serif;}
+        img{object-fit:cover; image-rendering:-webkit-optimize-contrast;}
+        body{background-color: #1a1d23; color: white; overflow-x: hidden;}
+        .hidden{display:none !important;}
+
+        /* --- HEADER NAV --- */
+        header{width:100%; position: sticky; top: 0; z-index:100; background-color: rgba(26, 29, 35, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0,132,255,0.2);}
+        .navbar{display:flex; justify-content:space-between; align-items:center; height:75px; padding:0 40px;}
+        h1{color: rgb(0,132,255); font-weight:800; font-size:35px; text-shadow:0 0 10px rgba(0,132,255,0.3); cursor:pointer;}
+        .navdiv ul{display:flex; align-items:center; list-style:none;}
+        .navdiv ul li a{color: white; text-decoration:none; margin:0 15px; font-size:16px; transition:0.3s; opacity: 0.8; cursor:pointer;}
+        .navdiv ul li a:hover, .navdiv ul li a.active-link{color:rgb(0,132,255); opacity: 1; font-weight: 600;}
+
+        /* Side Menu */
+        #menu-toggle{display:none;}
+        .toggle{position: relative; height:40px; width:40px; cursor:pointer; z-index:110;}
+        .toggle .common{position:absolute; height:3px; width:25px; background-color: rgb(0,132,255); border-radius:50px; transition:0.3s ease; left:50%; transform:translateX(-50%);}
+        .toggle .top_line{top:20%;} .toggle .middle_line{top:50%;} .toggle .bottom_line{top:80%;}
+        .slide{height:100vh; width:280px; position:fixed; right:0; top:0; background-color:#111; transition:0.5s ease; transform:translateX(280px); box-shadow:-5px 0 15px rgba(0,0,0,0.5); display:flex; flex-direction:column; padding:80px 25px; z-index:105;}
+        .slide h2{color: rgb(0,132,255); font-size:22px; margin-bottom:20px; border-bottom: 1px solid #222; padding-bottom: 10px;}
+        .slide ul{list-style:none;}
+        .slide ul li a{color:white; padding:15px 0; display:block; text-decoration:none; border-bottom:1px solid #222; transition: 0.3s; cursor:pointer;}
+        .slide ul li a:hover{color: rgb(0,132,255); padding-left: 10px;}
+        #menu-toggle:checked ~ .toggle .top_line{top:50%; transform:translate(-50%,-50%) rotate(45deg);}
+        #menu-toggle:checked ~ .toggle .bottom_line{top:50%; transform:translate(-50%,-50%) rotate(-45deg);}
+        #menu-toggle:checked ~ .toggle .middle_line{opacity:0;}
+        #menu-toggle:checked ~ .slide{transform:translateX(0);}
+
+        .button-container{margin-top:auto; display:flex; gap:10px; padding-bottom: 30px;}
+        .button-container a{flex:1; text-decoration:none;}
+        .button-container button{width:100%; padding:12px; border:1px solid #0084ff; background:transparent; border-radius:8px; cursor:pointer; transition: 0.3s; color:white; font-size:12px; font-weight: bold; pointer-events: none;}
+        .button-container a:hover button{background-color: rgb(0,132,255);}
+
+        /* --- PROFILE VIEW --- */
+        .profile-container { max-width: 520px; margin: 60px auto; background: #161b22; padding: 35px; border-radius: 20px; border: 1px solid rgba(0,132,255,0.3); box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+        .profile-header { text-align: center; margin-bottom: 25px; }
+        .profile-header i { font-size: 60px; color: #0084ff; margin-bottom: 10px; }
+        .profile-header h2 { color: #0084ff; font-size: 26px; text-transform: uppercase; letter-spacing: 2px; }
+        .profile-badge { display: inline-block; background: rgba(0,132,255,0.2); color: #0084ff; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-top: 6px; }
+        .profile-row { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 15px; }
+        .profile-row span:first-child { color: #888; }
+        .profile-row span:last-child { font-weight: 600; color: white; }
+        .btn-logout { width: 100%; padding: 12px; border: 1px solid #ff4d4d; background: rgba(255,77,77,0.15); border-radius: 8px; cursor: pointer; color: #ff4d4d; font-size: 13px; font-weight: bold; transition: 0.3s; pointer-events: auto !important; }
+        .btn-logout:hover { background: #ff4d4d; color: white; }
+
+        /* --- CART & HISTORY VIEW --- */
+        .cart-badge { background: #0084ff; color: white; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 50px; margin-left: 5px; }
+        .cart-wrapper { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        .cart-tabs { display: flex; gap: 15px; margin-bottom: 25px; }
+        .cart-tab-btn { flex: 1; padding: 14px; background: #161b22; border: 1px solid rgba(0,132,255,0.3); color: #aaa; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.3s; font-size: 15px; }
+        .cart-tab-btn.active { background: #0084ff; color: white; border-color: #0084ff; }
+
+        .cart-box { background: #161b22; padding: 25px; border-radius: 16px; border: 1px solid rgba(0,132,255,0.25); }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.08); gap: 15px; flex-wrap: wrap; }
+        .cart-item-info h4 { font-size: 16px; margin-bottom: 4px; }
+        .cart-item-info p { font-size: 13px; color: #0084ff; font-weight: 600; }
+        .cart-controls { display: flex; align-items: center; gap: 10px; }
+        .qty-btn { width: 30px; height: 30px; border-radius: 6px; border: 1px solid #0084ff; background: transparent; color: white; cursor: pointer; font-weight: 800; }
+        .qty-btn:hover { background: #0084ff; }
+        .remove-btn { background: rgba(255,77,77,0.15); color: #ff4d4d; border: 1px solid #ff4d4d; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+        .remove-btn:hover { background: #ff4d4d; color: white; }
+
+        .cart-summary { margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .cart-total { font-size: 22px; font-weight: 800; color: #00ff88; }
+        .btn-checkout { background: #0084ff; color: white; border: none; padding: 14px 30px; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
+        .btn-checkout:hover { background: #00a2ff; transform: scale(1.02); }
+
+        .history-card { background: rgba(255,255,255,0.03); padding: 18px; border-radius: 12px; border-left: 4px solid #0084ff; margin-bottom: 15px; }
+        .history-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; color: #888; }
+        .history-items { font-size: 14px; margin-bottom: 8px; color: #ddd; }
+        .history-total { font-size: 16px; font-weight: 800; color: #00ff88; }
+        .empty-msg { text-align: center; padding: 40px 10px; color: #777; font-size: 15px; }
+
+        /* --- MOVIES VIEW --- */
+        .slider-container{position:relative; width:100%; height:70vh; overflow:hidden; background:#000;}
+        .slider-track{display:flex; height: 100%; transition:transform 0.6s cubic-bezier(0.25,1,0.5,1);}
+        .swipe{min-width:100%; position:relative;}
+        .swipe img{width:100%; height:100%; object-fit:cover; opacity: 0.7;}
+        .content-overlay{position:absolute; bottom:60px; left:50px; color:white; z-index:5;}
+        .content-overlay h2{font-size:3.5rem; font-weight:800; margin-bottom: 20px;}
+        .btn-yellow{background-color: rgb(0,132,255); color:white; border:none; padding:14px 35px; font-weight:bold; cursor:pointer; margin-right:15px; border-radius:4px; transition: 0.3s;}
+        .btn-outline{background-color: rgba(255,255,255,0.1); backdrop-filter: blur(5px); color:white; border:1px solid white; padding:13px 33px; font-weight:bold; cursor:pointer; border-radius:4px;}
+        .arrow{position:absolute; top:50%; transform:translateY(-50%); background: rgba(0,0,0,0.2); color:white; border:none; font-size:2rem; padding:20px; cursor:pointer; z-index:10; transition: 0.3s;}
+        .next{right:0;} .prev{left:0;}
+
+        .title{color: rgb(0,132,255); font-size:28px; font-weight:800; margin:40px 0 30px 100px; border-left: 5px solid #0084ff; padding-left: 15px;}
+        .movie-grid{display:grid; grid-template-columns:1fr 1fr; column-gap:50px; padding:0 60px 50px 100px;}
+        .movie-item{display:flex; align-items:center; justify-content:space-between; background: rgba(255,255,255,0.03); border-bottom:1px solid rgba(255,255,255,0.1); padding:15px 20px; margin-bottom: 10px; border-radius:8px; transition: 0.3s;}
+        .movie-item:hover{background-color: rgba(0,132,255,0.1); border-color: #0084ff;}
+        .movie-info{display:flex; align-items:center; gap:15px;}
+        .rank{color: rgb(0,132,255); font-weight:800; font-size:20px; min-width:30px;}
+        .movie-name{color:white; font-weight:500; font-size:16px;}
+        .btn-buy{background-color: rgb(0,132,255); color:white; border:none; padding:10px 25px; font-weight:800; border-radius:6px; cursor:pointer; transition: 0.2s;}
+
+        /* --- BEVERAGE VIEW --- */
+        .page-header { text-align: center; padding: 60px 20px; background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=2070'); background-size: cover; background-position: center; }
+        .page-header h2 { font-size: 40px; color: #0084ff; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 10px; }
+        .page-header p { font-weight: 300; opacity: 0.8; }
+        .menu-container { padding: 40px 10%; }
+        .category-title { border-left: 5px solid #0084ff; padding-left: 15px; margin: 50px 0 25px 0; font-size: 28px; text-transform: uppercase; }
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+        .menu-card { background: #2a2d34; border-radius: 20px; overflow: hidden; transition: 0.4s; border: 1px solid rgba(255,255,255,0.05); }
+        .menu-card:hover { transform: translateY(-10px); border-color: #0084ff; box-shadow: 0 15px 30px rgba(0,132,255,0.3); }
+        .menu-img { width: 100%; height: 220px; background-color: #333; overflow: hidden; }
+        .menu-img img { width: 100%; height: 100%; object-fit: fill; transition: 0.5s; }
+        .menu-card:hover .menu-img img { transform: scale(1.1); }
+        .menu-info { padding: 25px; text-align: center; }
+        .menu-info h3 { font-size: 18px; margin-bottom: 8px; font-weight: 500; }
+        .price { color: #0084ff; font-weight: 800; font-size: 22px; margin-bottom: 20px; display: block; }
+        .btn-add { background: #0084ff; color: black; border: none; padding: 12px 20px; width: 100%; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-add:hover { background: white; transform: scale(1.02); }
+
+        /* --- MODAL --- */
+        #showtimeModal{display:none; position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85); backdrop-filter: blur(8px); justify-content:center;align-items:center; z-index:999;}
+        .modal-content{background:#1a1d24; padding:40px; border-radius:20px; width: 95%; max-width:600px; text-align:center; position:relative; border: 1px solid #0084ff; max-height: 90vh; overflow-y: auto;}
+        .close-btn{position:absolute; top:20px; right:20px; font-size:28px; cursor:pointer; color:#ff4d4d;}
+        .date-box, .time-box{background: rgba(255,255,255,0.03); border-radius:12px; padding:20px; margin-bottom:20px; border: 1px solid rgba(255,255,255,0.05);}
+        .date-box h4, .time-box h4{color: #0084ff; margin-bottom:15px; text-align:left; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;}
+        #timeButtons { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: #111318;
+            border-top: 1px solid rgba(0, 132, 255, 0.25);
+            margin-top: 50px;
+            padding: 55px 8% 25px;
+            color: #e0e0e0;
+        }
+
+        .footer-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            grid-template-columns: 1fr 1fr 1.2fr;
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        /* Left Column: Links */
+        .footer-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .footer-links a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 15px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .footer-links a:hover,
+        .footer-links a.highlight {
+            color: #0084ff;
+        }
+
+        /* Middle Column: Brand Badges */
+        .footer-badges {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 20px;
+        }
+        .badge-box {
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 18px;
+            border-radius: 6px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            font-size: 15px;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .badge-box span { color: #0084ff; }
+
+        /* Right Column: Info & Support */
+        .footer-info h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 12px;
+        }
+        .footer-info p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #bbb;
+            margin-bottom: 18px;
+        }
+        .btn-support {
+            display: inline-block;
+            background-color: #0084ff;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 14px;
+            padding: 13px 32px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: 0.3s;
+        }
+        .btn-support:hover {
+            background-color: #00a2ff;
+            box-shadow: 0 0 18px rgba(0, 132, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* Middle Bar: App & Socials */
+        .footer-mid {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .footer-row-group {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+        .footer-row-group span {
+            font-weight: 700;
+            font-size: 15px;
+            color: white;
+        }
+        .footer-icons {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .footer-icons a {
+            color: white;
+            font-size: 20px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .footer-icons a:hover {
+            color: #0084ff;
+            transform: translateY(-2px);
+        }
+
+        /* Bottom Bar: Legal & Copyright */
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding-top: 22px;
+            font-size: 13px;
+            color: #aaa;
+        }
+        .footer-legal {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .footer-legal a {
+            color: #ddd;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .footer-legal a:hover {
+            color: #0084ff;
+        }
+
+        @media (max-width: 850px) {
+            .footer-top { grid-template-columns: 1fr; gap: 30px; }
+        }
+
+        @media (max-width: 768px) {
+            .menu-container { padding: 20px 5%; }
+            .navbar { padding: 0 20px; }
+            .movie-grid { grid-template-columns: 1fr; padding: 0 20px 40px; }
+            .title { margin: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+<nav class="navbar">
+    <h1 onclick="showView('movies')">CINEMAX</h1>
+    <div class="navdiv">
+        <ul>
+            <li><a id="navMovies" class="active-link" onclick="showView('movies')"><i class="fas fa-film"></i> Movie</a></li> 
+            <li><a id="navBeverage" onclick="showView('beverage')"><i class="fas fa-burger"></i> Beverage</a></li>
+            <li><a id="navCart" onclick="showView('cart')"><i class="fas fa-cart-shopping"></i> Cart <span class="cart-badge" id="cartCount">0</span></a></li>
+        </ul>
+    </div>
+
+    <input type="checkbox" id="menu-toggle">
+    <label for="menu-toggle" class="toggle">
+        <span class="top_line common"></span>
+        <span class="middle_line common"></span>
+        <span class="bottom_line common"></span>
+    </label>
+
+    <div class="slide">
+    <h2>MENU</h2>
+    <ul>
+        <li id="menuProfileItem" class="hidden"><a onclick="showView('profile')"><i class="fas fa-user-circle"></i> MY PROFILE</a></li>
+        <li><a onclick="showView('movies')"><i class="fas fa-film"></i> MOVIES</a></li>
+        <li><a onclick="showView('beverage')"><i class="fas fa-burger"></i> BEVERAGE</a></li>
+        <li><a href="#"><i class="fas fa-info-circle"></i> ABOUT CINEMAX</a></li>
+        <li><a href="#"><i class="fas fa-phone"></i> CONTACT US</a></li>
+        <li><a href="#"><i class="fas fa-file"></i> TERMS AND CONDITION</a></li>
+    </ul>
+    <div class="button-container" id="authButtons">
+        <a href="auth.php"><button>LOG IN</button></a>
+        <a href="auth.php?mode=signup"><button style="background: #0084ff;">SIGN UP</button></a>
+    </div>
+</div>
+</nav>
+</header>
+
+<!-- VIEW 1: MOVIES -->
+<main id="moviesView">
+    <section class="slider-container">
+        <button class="arrow prev" onclick="moveSlide(-1)">❮</button>
+        <button class="arrow next" onclick="moveSlide(1)">❯</button>
+        <div class="slider-track">
+            <div class="swipe"><img src="image/zootopia.jpg" alt="1"><div class="content-overlay"><h2>ZOOTOPIA 2</h2><button class="btn-yellow" onclick="openShowtimeModal('Zootopia 2')">BUY NOW</button><button class="btn-outline" onclick="window.open('https://www.youtube.com/watch?v=M2mWp43LWHQ', '_blank')">TRAILER</button></div></div>
+            <div class="swipe"><img src="image/papa.jpg" alt="2"><div class="content-overlay"><h2>PAPAZOLA THE MOVIE</h2><button class="btn-yellow" onclick="openShowtimeModal('Papazola The Movie')">BUY NOW</button><button class="btn-outline" onclick="window.open('https://www.youtube.com/watch?v=vtAUtixKx4o', '_blank')">TRAILER</button></div></div>
+            <div class="swipe"><img src="image/sponge.jpg" alt="3"><div class="content-overlay"><h2>THE SPONGEBOB MOVIE</h2><button class="btn-yellow" onclick="openShowtimeModal('SpongeBob Movie')">BUY NOW</button><button class="btn-outline" onclick="window.open('https://www.youtube.com/watch?v=WmxJYb3VF8I', '_blank')">TRAILER</button></div></div>
+            <div class="swipe"><img src="image/avatar.jpg" alt="4"><div class="content-overlay"><h2>AVATAR: FIRE AND ASH</h2><button class="btn-yellow" onclick="openShowtimeModal('Avatar: Fire And Ash')">BUY NOW</button><button class="btn-outline" onclick="window.open('https://www.youtube.com/watch?v=nb_fFj_0rq8', '_blank')">TRAILER</button></div></div>
+            <div class="swipe"><img src="image/anaconda.png" alt="5"><div class="content-overlay"><h2>ANACONDA (2025)</h2><button class="btn-yellow" onclick="openShowtimeModal('Anaconda')">BUY NOW</button><button class="btn-outline" onclick="window.open('https://www.youtube.com/watch?v=ZSA9tVpu7w8', '_blank')">TRAILER</button></div></div>       
+        </div>
+    </section>
+
+    <section>
+        <h2 class="title">Top 10 Movies</h2>
+        <div class="movie-grid">
+            <div class="movie-list">
+                <div class="movie-item"><div class="movie-info"><span class="rank">1</span><span class="movie-name">Papa Zola The Movie</span></div><button class="btn-buy" onclick="openShowtimeModal('Papazola The Movie')">BUY NOW</button></div>
+                <div class="movie-item"><div class="movie-info"><span class="rank">3</span><span class="movie-name">Back To The Past</span></div><button class="btn-buy" onclick="openShowtimeModal('Back To The Past')">BUY NOW</button></div>
+                <div class="movie-item"><div class="movie-info"><span class="rank">5</span><span class="movie-name">Zootopia 2</span></div><button class="btn-buy" onclick="openShowtimeModal('Zootopia 2')">BUY NOW</button></div>
+                <div class="movie-item"><div class="movie-info"><span class="rank">7</span><span class="movie-name">Janur Ireng</span></div><button class="btn-buy" onclick="openShowtimeModal('Janur Ireng')">BUY NOW</button></div>
+                <div class="movie-item"><div class="movie-info"><span class="rank">9</span><span class="movie-name">Duyung: Legenda Aurora</span></div><button class="btn-buy" onclick="openShowtimeModal('Duyung: Legenda Aurora')">BUY NOW</button></div>
+            </div>
+            <div class="movie-list">
+                <div class="movie-item"><div class="movie-info"><span class="rank">2</span><span class="movie-name">Avatar: Fire And Ash</span></div><button class="btn-buy" onclick="openShowtimeModal('Avatar: Fire And Ash')">BUY NOW</button></div>
+                <div class="movie-item"><div class="movie-info"><span class="rank">4</span><span class="movie-name">Anaconda</span></div><button class="btn-buy" onclick="openShowtimeModal('Anaconda')">BUY NOW</button></div>
+                <div class="movie-item"><div class="movie-info"><span class="rank">6</span><span class="movie-name">Crayon Shin Chan The Movie</span></div><button class="btn-buy" onclick="openShowtimeModal('Crayon Shin Chan')">BUY NOW</button></div>
+                <div class="movie-item"><div class="movie-info"><span class="rank">8</span><span class="movie-name">White</span></div><button class="btn-buy" onclick="openShowtimeModal('White')">BUY NOW</button></div>
+                <div class="movie-item"><div class="movie-info"><span class="rank">10</span><span class="movie-name">The SpongeBob Movie</span></div><button class="btn-buy" onclick="openShowtimeModal('SpongeBob Movie')">BUY NOW</button></div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <!-- TOP 2 COLUMNS -->
+        <div class="footer-top">
+            <!-- Column 1: Navigation -->
+            <ul class="footer-links">
+                <li><a class="highlight" onclick="showView('movies')">Movies</a></li>
+                <li><a onclick="showView('beverage')">Snacks & Beverages</a></li>
+                <li><a onclick="showView('cart')">My Cart & Order History</a></li>
+                <li><a href="auth.php">Member Login / Sign Up</a></li>
+            </ul>
+
+            <!-- Column 2: Address & Support -->
+            <div class="footer-info">
+                <h3>CINEMAX Sdn Bhd</h3>
+                <p>
+                    Universiti Teknologi MARA (UiTM) Cawangan Melaka Kampus Jasin,<br>
+                    Kampung Seri Mendapat, 77300 Merlimau, Melaka.
+                </p>
+                <p style="color:#ddd; margin-bottom:14px;">How do I contact CINEMAX Customer Service?</p>
+                <button class="btn-support" onclick="alert('Contact CINEMAX Support at support@cinemax.com.my')">GET SUPPORT</button>
+            </div>
+        </div>
+
+        <!-- MIDDLE BAR: APP & SOCIALS -->
+        <div class="footer-mid">
+            <div class="footer-row-group">
+                <span>Visit Our Website</span>
+                <div class="footer-icons">
+                    <a href="#" title="Apple App Store"><i class="fab fa-chrome"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-row-group">
+                <span>Follow Us On</span>
+                <div class="footer-icons">
+                    <a href="https://www.instagram.com/amrn.hzq?dmpr=MTd4ZmVtMDcxbXZrag%3D%3D&utm_source=qr" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.tiktok.com/@amrn.hzq" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://youtube.com/@amirunhaziqabdulhalim224?si=kJnB2UcvMLH2UVLD" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a href="https://www.threads.com/@amrn.hzq?igshid=NTc4MTIwNjQ2YQ==" target="_blank" title="Threads"><i class="fab fa-threads"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM BAR: LEGAL & COPYRIGHT -->
+        <div class="footer-bottom">
+            <div class="footer-legal">
+                <a href="#">Terms & Conditions</a>
+                <a href="#">Personal Data Notice</a>
+                <a href="#">Privacy Policy</a>
+            </div>
+            <small>© Copyright 2026 CINEMAX Sdn Bhd. All Rights Reserved</small>
+        </div>
+    </footer>
+</main>
+
+<!-- VIEW 2: BEVERAGES & SNACKS -->
+<main id="beverageView" class="hidden">
+    <div class="page-header">
+        <h2>Snacks & Beverages</h2>
+        <p>Get your snacks before the movie starts!</p>
+    </div>
+
+    <div class="menu-container">
+        <h2 class="category-title">Popcorn & Snacks</h2>
+        <div class="menu-grid">
+            <div class="menu-card">
+                <div class="menu-img"><img src="image/popcorn.jpg" alt="Popcorn"></div>
+                <div class="menu-info">
+                    <h3>Caramel Popcorn (L)</h3>
+                    <span class="price">RM 15.00</span>
+                    <button class="btn-add" onclick="addToCart('Caramel Popcorn (L)', 15.00)"><i class="fas fa-cart-plus"></i> ADD TO CART</button>
+                </div>
+            </div>
+            <div class="menu-card">
+                <div class="menu-img"><img src="image/nachos.jpg" alt="Nachos"></div>
+                <div class="menu-info">
+                    <h3>Cheesy Nachos</h3>
+                    <span class="price">RM 12.50</span>
+                    <button class="btn-add" onclick="addToCart('Cheesy Nachos', 12.50)"><i class="fas fa-cart-plus"></i> ADD TO CART</button>
+                </div>
+            </div>
+            <div class="menu-card">
+                <div class="menu-img"><img src="image/hotdog.jpg" alt="Hotdog"></div>
+                <div class="menu-info">
+                    <h3>Jumbo Chicken Hotdog</h3>
+                    <span class="price">RM 9.00</span>
+                    <button class="btn-add" onclick="addToCart('Jumbo Chicken Hotdog', 9.00)"><i class="fas fa-cart-plus"></i> ADD TO CART</button>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="category-title">Cold Beverages</h2>
+        <div class="menu-grid">
+            <div class="menu-card">
+                <div class="menu-img"><img src="image/coke.jpg" alt="Coke"></div>
+                <div class="menu-info">
+                    <h3>Coca-Cola (Regular)</h3>
+                    <span class="price">RM 7.00</span>
+                    <button class="btn-add" onclick="addToCart('Coca-Cola (Regular)', 7.00)"><i class="fas fa-cart-plus"></i> ADD TO CART</button>
+                </div>
+            </div>
+            <div class="menu-card">
+                <div class="menu-img"><img src="image/coffee.jpg" alt="Coffee"></div>
+                <div class="menu-info">
+                    <h3>Iced Americano</h3>
+                    <span class="price">RM 10.00</span>
+                    <button class="btn-add" onclick="addToCart('Iced Americano', 10.00)"><i class="fas fa-cart-plus"></i> ADD TO CART</button>
+                </div>
+            </div>
+            <div class="menu-card">
+                <div class="menu-img"><img src="image/mineral.jpg" alt="Mineral Water"></div>
+                <div class="menu-info">
+                    <h3>Mineral Water</h3>
+                    <span class="price">RM 4.00</span>
+                    <button class="btn-add" onclick="addToCart('Mineral Water', 4.00)"><i class="fas fa-cart-plus"></i> ADD TO CART</button>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="category-title">Combo Sets</h2>
+        <div class="menu-grid">
+            <div class="menu-card" style="border: 2px solid #0084ff;">
+                <div class="menu-img"><img src="image/combo1.jpg" alt="Combo 1"></div>
+                <div class="menu-info">
+                    <h3 style="color: #0084ff;">Solo Combo</h3>
+                    <p style="font-size: 12px; margin-bottom: 10px; opacity: 0.7;">1x Popcorn (L) + 1x Drink (R)</p>
+                    <span class="price">RM 19.90</span>
+                    <button class="btn-add" onclick="addToCart('Solo Combo', 19.90)"><i class="fas fa-cart-plus"></i> ADD TO CART</button>
+                </div>
+            </div>
+            <div class="menu-card">
+                <div class="menu-img"><img src="image/combo2.png" alt="Combo 2"></div>
+                <div class="menu-info">
+                    <h3>Couple Combo</h3>
+                    <p style="font-size: 12px; margin-bottom: 10px; opacity: 0.7;">1x Popcorn (L) + 2x Drink (R)</p>
+                    <span class="price">RM 25.00</span>
+                    <button class="btn-add" onclick="addToCart('Couple Combo', 25.00)"><i class="fas fa-cart-plus"></i> ADD TO CART</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- VIEW 3: USER PROFILE -->
+<main id="profileView" class="hidden">
+    <div class="profile-container">
+        <div class="profile-header">
+            <i class="fas fa-user-circle"></i>
+            <h2 id="profName">User Name</h2>
+            <span class="profile-badge" id="profRole">Customer</span>
+        </div>
+        <div id="profileDetails"></div>
+    </div>
+</main>
+
+<!-- VIEW 4: CART & ORDER HISTORY -->
+<main id="cartView" class="hidden">
+    <div class="cart-wrapper">
+        <div class="cart-tabs">
+            <button class="cart-tab-btn active" id="tabCurrentCart" onclick="switchCartTab('current')"><i class="fas fa-cart-shopping"></i> My Cart</button>
+            <button class="cart-tab-btn" id="tabOrderHistory" onclick="switchCartTab('history')"><i class="fas fa-clock-rotate-left"></i> Order History</button>
+        </div>
+
+        <!-- TAB 1: CURRENT CART -->
+        <div id="currentCartSection" class="cart-box">
+            <div id="cartItemsList"></div>
+            <div class="cart-summary" id="cartSummaryBar">
+                <div>Total: <span class="cart-total" id="cartTotalPrice">RM 0.00</span></div>
+                <button class="btn-checkout" onclick="checkoutCart()"><i class="fas fa-credit-card"></i> Checkout Now</button>
+            </div>
+        </div>
+
+        <!-- TAB 2: ORDER HISTORY -->
+        <div id="orderHistorySection" class="cart-box hidden">
+            <div id="historyItemsList"></div>
+        </div>
+    </div>
+</main>
+
+<!-- SHOWTIME MODAL -->
+<div id="showtimeModal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal()">×</span>
+    <h3 id="mTitle" style="color:#0084ff; margin-bottom:25px; font-weight:800;">Select Showtime</h3>
+    <div class="date-box">
+      <h4>Select Date</h4>
+      <div id="datePicker" style="display:flex; flex-wrap:wrap; justify-content:center; gap:10px;"></div>
+    </div>
+    <div class="time-box">
+      <h4>Available Times</h4>
+      <div id="timeButtons"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Switch between Movies, Beverage, and Profile views
+function showView(view) {
+    document.getElementById('moviesView').classList.toggle('hidden', view !== 'movies');
+    document.getElementById('beverageView').classList.toggle('hidden', view !== 'beverage');
+    document.getElementById('profileView').classList.toggle('hidden', view !== 'profile');
+    document.getElementById('cartView').classList.toggle('hidden', view !== 'cart');
+
+    document.getElementById('navMovies').classList.toggle('active-link', view === 'movies');
+    document.getElementById('navBeverage').classList.toggle('active-link', view === 'beverage');
+    document.getElementById('navCart').classList.toggle('active-link', view === 'cart');
+    document.getElementById('menu-toggle').checked = false;
+
+    if (view === 'profile') renderProfile();
+    if (view === 'cart') { renderCart(); renderHistory(); }
+    window.scrollTo(0, 0);
+}
+
+// --- CART & HISTORY LOGIC ---
+function getCart() { return JSON.parse(localStorage.getItem('cinemax_cart') || '[]'); }
+function saveCart(cart) { localStorage.setItem('cinemax_cart', JSON.stringify(cart)); updateCartBadge(); }
+function getHistory() { return JSON.parse(localStorage.getItem('cinemax_history') || '[]'); }
+
+function updateCartBadge() {
+    const totalQty = getCart().reduce((sum, item) => sum + item.qty, 0);
+    document.getElementById('cartCount').innerText = totalQty;
+}
+
+// Block guests and prompt them to log in
+function requireLogin() {
+    if (!localStorage.getItem('currentUser')) {
+        if (confirm('Please log in first to buy tickets or add items to cart. Go to Login page now?')) {
+            window.location.href = 'auth.php';
+        }
+        return false;
+    }
+    return true;
+}
+function addToCart(name, price) {
+    if (!requireLogin()) return; // <-- Add this line
+
+    const cart = getCart();
+    const existing = cart.find(i => i.name === name);
+    if (existing) { existing.qty += 1; }
+    else { cart.push({ name, price, qty: 1 }); }
+    saveCart(cart);
+    alert(`Added ${name} to cart!`);
+}
+
+function changeQty(index, delta) {
+    const cart = getCart();
+    cart[index].qty += delta;
+    if (cart[index].qty <= 0) cart.splice(index, 1);
+    saveCart(cart);
+    renderCart();
+}
+
+function removeFromCart(index) {
+    const cart = getCart();
+    cart.splice(index, 1);
+    saveCart(cart);
+    renderCart();
+}
+
+function renderCart() {
+    const cart = getCart();
+    const list = document.getElementById('cartItemsList');
+    const summary = document.getElementById('cartSummaryBar');
+
+    if (cart.length === 0) {
+        list.innerHTML = '<p class="empty-msg"><i class="fas fa-cart-shopping"></i> Your cart is empty. Book a movie or add snacks!</p>';
+        summary.classList.add('hidden');
+        return;
+    }
+
+    summary.classList.remove('hidden');
+    let total = 0;
+    list.innerHTML = cart.map((item, idx) => {
+        const sub = item.price * item.qty;
+        total += sub;
+
+        if (item.type === 'ticket') {
+            return `
+                <div class="cart-item">
+                    <div class="cart-item-info">
+                        <h4>${item.name}</h4>
+                        <p style="color:#aaa; font-weight:400; font-size:12px;">${item.details}</p>
+                        <p>Total: RM ${sub.toFixed(2)}</p>
+                    </div>
+                    <div class="cart-controls">
+                        <button class="remove-btn" onclick="removeFromCart(${idx})"><i class="fas fa-trash"></i> Remove</button>
+                    </div>
+                </div>`;
+        }
+
+        return `
+            <div class="cart-item">
+                <div class="cart-item-info">
+                    <h4>${item.name}</h4>
+                    <p>RM ${item.price.toFixed(2)} each • Subtotal: RM ${sub.toFixed(2)}</p>
+                </div>
+                <div class="cart-controls">
+                    <button class="qty-btn" onclick="changeQty(${idx}, -1)">-</button>
+                    <span>${item.qty}</span>
+                    <button class="qty-btn" onclick="changeQty(${idx}, 1)">+</button>
+                    <button class="remove-btn" onclick="removeFromCart(${idx})"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>`;
+    }).join('');
+    document.getElementById('cartTotalPrice').innerText = 'RM ' + total.toFixed(2);
+}
+
+function checkoutCart() {
+    const cart = getCart();
+    if (cart.length === 0) return;
+
+    const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+    const hasTickets = cart.some(i => i.type === 'ticket');
+    const hasSnacks = cart.some(i => i.type !== 'ticket');
+
+    let orderType = 'Snacks & Beverages';
+    if (hasTickets && hasSnacks) orderType = 'Tickets & Snacks';
+    else if (hasTickets) orderType = 'Movie Tickets';
+
+    const summaryText = cart.map(i =>
+        i.type === 'ticket' ? `${i.name} (${i.details})` : `${i.qty}x ${i.name}`
+    ).join('<br>');
+
+    const history = getHistory();
+    history.unshift({
+        type: orderType,
+        date: new Date().toLocaleString(),
+        details: summaryText,
+        total: total.toFixed(2)
+    });
+    localStorage.setItem('cinemax_history', JSON.stringify(history));
+
+    saveCart([]);
+    renderCart();
+    renderHistory();
+    alert(`Order confirmed! Total paid: RM ${total.toFixed(2)}`);
+    switchCartTab('history');
+}
+
+function renderHistory() {
+    const history = getHistory();
+    const list = document.getElementById('historyItemsList');
+
+    if (history.length === 0) {
+        list.innerHTML = '<p class="empty-msg"><i class="fas fa-clock-rotate-left"></i> No past orders yet.</p>';
+        return;
+    }
+
+    list.innerHTML = history.map(order => `
+        <div class="history-card">
+            <div class="history-header">
+                <span><strong>${order.type}</strong></span>
+                <span>${order.date}</span>
+            </div>
+            <div class="history-items">${order.details}</div>
+            <div class="history-total">RM ${order.total}</div>
+        </div>
+    `).join('');
+}
+
+function switchCartTab(tab) {
+    const isCurrent = tab === 'current';
+    document.getElementById('currentCartSection').classList.toggle('hidden', !isCurrent);
+    document.getElementById('orderHistorySection').classList.toggle('hidden', isCurrent);
+    document.getElementById('tabCurrentCart').classList.toggle('active', isCurrent);
+    document.getElementById('tabOrderHistory').classList.toggle('active', !isCurrent);
+}
+
+// Initialize badge on page load
+updateCartBadge();
+
+// Check login state and update sidebar
+function updateAuthUI() {
+    const rawUser = localStorage.getItem('currentUser');
+    const authButtons = document.getElementById('authButtons');
+    const profileMenuItem = document.getElementById('menuProfileItem');
+
+    if (rawUser) {
+        profileMenuItem.classList.remove('hidden');
+        authButtons.innerHTML = `<button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> LOG OUT</button>`;
+    } else {
+        profileMenuItem.classList.add('hidden');
+        authButtons.innerHTML = `
+            <a href="auth.php"><button>LOG IN</button></a>
+            <a href="auth.php"><button style="background: #0084ff;">SIGN UP</button></a>
+        `;
+    }
+}
+
+// Populate Profile View with saved user info
+function renderProfile() {
+    const rawUser = localStorage.getItem('currentUser');
+    if (!rawUser) { showView('movies'); return; }
+
+    const user = JSON.parse(rawUser);
+    document.getElementById('profName').innerText = user.fullName || 'User';
+    document.getElementById('profRole').innerText = user.role || 'Customer';
+
+    let rows = `
+        <div class="profile-row"><span>Full Name</span><span>${user.fullName || '-'}</span></div>
+        <div class="profile-row"><span>Email</span><span>${user.email || '-'}</span></div>
+    `;
+    if (user.role === 'Staff') {
+        rows += `
+            <div class="profile-row"><span>Staff ID</span><span>${user.staffId || '-'}</span></div>
+            <div class="profile-row"><span>Department</span><span>${user.dept || '-'}</span></div>
+        `;
+    } else {
+        rows += `<div class="profile-row"><span>Phone Number</span><span>${user.phone || '-'}</span></div>`;
+    }
+    document.getElementById('profileDetails').innerHTML = rows;
+}
+
+// Log out user and redirect to Sign Up page
+function logout() {
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('isStaffLoggedIn');
+    localStorage.removeItem('currentStaff');
+    alert('You have been logged out.');
+    window.location.href = 'auth.php?mode=signup';
+}
+
+// Run on page load
+updateAuthUI();
+
+// Hero Slider
+let currentIndex = 0;
+function moveSlide(direction){
+    const track = document.querySelector('.slider-track');
+    const slides = document.querySelectorAll('.swipe');
+    currentIndex = (currentIndex + direction + slides.length) % slides.length;
+    track.style.transform = `translateX(${currentIndex * -100}%)`;
+}
+setInterval(() => { moveSlide(1); }, 5000);
+
+// Showtime Modal
+function openShowtimeModal(movieName){
+    if (!requireLogin()) return;
+    
+    localStorage.setItem("selectedMovie", movieName);
+    document.getElementById("mTitle").innerText = movieName;
+    const modal = document.getElementById("showtimeModal");
+    const dateContainer = document.getElementById("datePicker");
+    const timeContainer = document.getElementById("timeButtons");
+    dateContainer.innerHTML = ''; timeContainer.innerHTML = '';
+    const monthNames = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+    let today = new Date();
+
+    for(let i = 0; i < 8; i++){
+        let date = new Date(); date.setDate(today.getDate() + i);
+        let day = date.getDate(); let month = monthNames[date.getMonth()];
+        let btn = document.createElement("button");
+        btn.innerText = `${day} ${month}`;
+        btn.onclick = function(){
+            localStorage.setItem("selectedDate", `${day} ${month}`);
+            highlightDate(btn); populateTimes();
+        };
+        btn.style.cssText = "padding:10px 18px; border:1px solid #0084ff; border-radius:8px; background:transparent; color:white; cursor:pointer; transition: 0.3s;";
+        dateContainer.appendChild(btn);
+    }
+    function highlightDate(selectedBtn){
+        Array.from(dateContainer.children).forEach(btn => { btn.style.backgroundColor = "transparent"; btn.style.color = "white"; });
+        selectedBtn.style.backgroundColor = "#0084ff"; selectedBtn.style.color = "black";
+    }
+    function populateTimes(){
+        timeContainer.innerHTML = '';
+        const times = ["10:00 AM", "12:30 PM", "02:15 PM", "04:45 PM", "06:00 PM", "08:30 PM", "10:15 PM", "11:45 PM"];
+        times.forEach(timeStr => {
+            let btn = document.createElement("button");
+            btn.innerText = timeStr;
+            btn.style.cssText = "padding:15px; border-radius:8px; border:1px solid rgba(0,132,255,0.5); cursor:pointer; background:rgba(0,132,255,0.1); color:white; font-weight:500; transition: 0.3s;";
+            btn.onmouseover = () => { btn.style.background = "#0084ff"; btn.style.color = "black"; };
+            btn.onmouseout = () => { btn.style.background = "rgba(0,132,255,0.1)"; btn.style.color = "white"; };
+            btn.onclick = function(){
+                localStorage.setItem("selectedTime", timeStr);
+                window.location.href = "booking.php";
+            };
+            timeContainer.appendChild(btn);
+        });
+    }
+    modal.style.display = "flex";
+}
+function closeModal(){ document.getElementById("showtimeModal").style.display = "none"; }
+</script>
+</body>
+</html>
