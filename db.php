@@ -1,8 +1,8 @@
 <?php
-$host = "sqlxxx.infinityfree.com"; // from InfinityFree panel
-$user = "if0_xxxxxxx";             // from InfinityFree panel
-$pass = "your_vpanel_password";    // from InfinityFree panel
-$db   = "if0_xxxxxxx_cinemax";     // from InfinityFree panel
+$host = "cinemax.infinityfreeapp.com"; 
+$user = "if0_43543695";             
+$pass = "amirun02";    
+$db   = "if0_43543695_cinemax";     
 
 $conn = mysqli_connect($host, $user, $pass, $db);
 if (!$conn) {
