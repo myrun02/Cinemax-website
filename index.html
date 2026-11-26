@@ -35,10 +35,14 @@
         #menu-toggle:checked ~ .toggle .middle_line{opacity:0;}
         #menu-toggle:checked ~ .slide{transform:translateX(0);}
 
-        .button-container{margin-top:auto; display:flex; gap:10px; padding-bottom: 30px;}
-        .button-container a{flex:1; text-decoration:none;}
-        .button-container button{width:100%; padding:12px; border:1px solid #0084ff; background:transparent; border-radius:8px; cursor:pointer; transition: 0.3s; color:white; font-size:12px; font-weight: bold; pointer-events: none;}
-        .button-container a:hover button{background-color: rgb(0,132,255);}
+        .button-container { margin-top: auto; display: flex; gap: 10px; padding-bottom: 30px; }
+        .button-container a {
+            flex: 1; text-decoration: none; text-align: center; display: block;
+            padding: 12px; border: 1px solid #0084ff; background: transparent;
+            border-radius: 8px; cursor: pointer; transition: 0.3s;
+            color: white; font-size: 12px; font-weight: bold;
+        }
+        .button-container a:hover { background-color: rgb(0, 132, 255); }
 
         /* --- PROFILE VIEW --- */
         .profile-container { max-width: 520px; margin: 60px auto; background: #161b22; padding: 35px; border-radius: 20px; border: 1px solid rgba(0,132,255,0.3); box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
@@ -141,7 +145,6 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            grid-template-columns: 1fr 1fr 1.2fr;
             gap: 40px;
             margin-bottom: 50px;
         }
@@ -364,60 +367,6 @@
             </div>
         </div>
     </section>
-
-    <footer>
-        <!-- TOP 2 COLUMNS -->
-        <div class="footer-top">
-            <!-- Column 1: Navigation -->
-            <ul class="footer-links">
-                <li><a class="highlight" onclick="showView('movies')">Movies</a></li>
-                <li><a onclick="showView('beverage')">Snacks & Beverages</a></li>
-                <li><a onclick="showView('cart')">My Cart & Order History</a></li>
-                <li><a href="auth.php">Member Login / Sign Up</a></li>
-            </ul>
-
-            <!-- Column 2: Address & Support -->
-            <div class="footer-info">
-                <h3>CINEMAX Sdn Bhd</h3>
-                <p>
-                    Universiti Teknologi MARA (UiTM) Cawangan Melaka Kampus Jasin,<br>
-                    Kampung Seri Mendapat, 77300 Merlimau, Melaka.
-                </p>
-                <p style="color:#ddd; margin-bottom:14px;">How do I contact CINEMAX Customer Service?</p>
-                <button class="btn-support" onclick="alert('Contact CINEMAX Support at support@cinemax.com.my')">GET SUPPORT</button>
-            </div>
-        </div>
-
-        <!-- MIDDLE BAR: APP & SOCIALS -->
-        <div class="footer-mid">
-            <div class="footer-row-group">
-                <span>Visit Our Website</span>
-                <div class="footer-icons">
-                    <a href="#" title="Apple App Store"><i class="fab fa-chrome"></i></a>
-                </div>
-            </div>
-
-            <div class="footer-row-group">
-                <span>Follow Us On</span>
-                <div class="footer-icons">
-                    <a href="https://www.instagram.com/amrn.hzq?dmpr=MTd4ZmVtMDcxbXZrag%3D%3D&utm_source=qr" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="https://www.tiktok.com/@amrn.hzq" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
-                    <a href="https://youtube.com/@amirunhaziqabdulhalim224?si=kJnB2UcvMLH2UVLD" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
-                    <a href="https://www.threads.com/@amrn.hzq?igshid=NTc4MTIwNjQ2YQ==" target="_blank" title="Threads"><i class="fab fa-threads"></i></a>
-                </div>
-            </div>
-        </div>
-
-        <!-- BOTTOM BAR: LEGAL & COPYRIGHT -->
-        <div class="footer-bottom">
-            <div class="footer-legal">
-                <a href="#">Terms & Conditions</a>
-                <a href="#">Personal Data Notice</a>
-                <a href="#">Privacy Policy</a>
-            </div>
-            <small>© Copyright 2026 CINEMAX Sdn Bhd. All Rights Reserved</small>
-        </div>
-    </footer>
 </main>
 
 <!-- VIEW 2: BEVERAGES & SNACKS -->
@@ -543,6 +492,60 @@
         </div>
     </div>
 </main>
+
+<footer>
+    <!-- TOP 2 COLUMNS -->
+    <div class="footer-top">
+        <!-- Column 1: Navigation -->
+        <ul class="footer-links">
+            <li><a class="highlight" onclick="showView('movies')">Movies</a></li>
+            <li><a onclick="showView('beverage')">Snacks & Beverages</a></li>
+            <li><a onclick="showView('cart')">My Cart & Order History</a></li>
+            <li><a href="auth.php">Member Login / Sign Up</a></li>
+        </ul>
+
+        <!-- Column 2: Address & Support -->
+        <div class="footer-info">
+            <h3>CINEMAX Sdn Bhd</h3>
+            <p>
+                Universiti Teknologi MARA (UiTM) Cawangan Melaka Kampus Jasin,<br>
+                Kampung Seri Mendapat, 77300 Merlimau, Melaka.
+            </p>
+            <p style="color:#ddd; margin-bottom:14px;">How do I contact CINEMAX Customer Service?</p>
+             <button class="btn-support" onclick="alert('Contact CINEMAX Support at support@cinemax.com.my')">GET SUPPORT</button>
+        </div>
+    </div>
+
+    <!-- MIDDLE BAR: APP & SOCIALS -->
+    <div class="footer-mid">
+        <div class="footer-row-group">
+            <span>Visit Our Website</span>
+            <div class="footer-icons">
+                <a href="index.html" title="Visit Website"><i class="fab fa-chrome"></i></a>
+            </div>
+        </div>
+
+        <div class="footer-row-group">
+            <span>Follow Us On</span>
+            <div class="footer-icons">
+                <a href="https://www.instagram.com/amrn.hzq?dmpr=MTd4ZmVtMDcxbXZrag%3D%3D&utm_source=qr" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.tiktok.com/@amrn.hzq" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
+                <a href="https://youtube.com/@amirunhaziqabdulhalim224?si=kJnB2UcvMLH2UVLD" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
+                <a href="https://www.threads.com/@amrn.hzq?igshid=NTc4MTIwNjQ2YQ==" target="_blank" title="Threads"><i class="fab fa-threads"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM BAR: LEGAL & COPYRIGHT -->
+    <div class="footer-bottom">
+        <div class="footer-legal">
+            <a href="#">Terms & Conditions</a>
+            <a href="#">Personal Data Notice</a>
+            <a href="#">Privacy Policy</a>
+        </div>
+        <small>© Copyright 2026 CINEMAX Sdn Bhd. All Rights Reserved</small>
+    </div>
+</footer>
 
 <!-- SHOWTIME MODAL -->
 <div id="showtimeModal">
@@ -744,12 +747,12 @@ function updateAuthUI() {
 
     if (rawUser) {
         profileMenuItem.classList.remove('hidden');
-        authButtons.innerHTML = `<button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> LOG OUT</button>`;
+        authButtons.innerHTML = `<button type="button" class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> LOG OUT</button>`;
     } else {
         profileMenuItem.classList.add('hidden');
         authButtons.innerHTML = `
-            <a href="auth.php"><button>LOG IN</button></a>
-            <a href="auth.php"><button style="background: #0084ff;">SIGN UP</button></a>
+            <a href="auth.php">LOG IN</a>
+            <a href="auth.php?mode=signup" style="background: #0084ff;">SIGN UP</a>
         `;
     }
 }
