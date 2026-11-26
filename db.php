@@ -7,7 +7,7 @@ if ($_SERVER['HTTP_HOST'] === 'localhost' || $_SERVER['HTTP_HOST'] === '127.0.0.
     $db   = "cinemax_db";
 } else {
     // Live InfinityFree Settings
-    $host = "cinemax.infinityfreeapp.com"; 
+    $host = "sql308.infinityfree.com"; 
     $user = "if0_43543695";             
     $pass = "amirun02";    
     $db   = "if0_43543695_cinemax";  
